@@ -546,6 +546,15 @@ char serial_port_getkey() {
 	return getkey;
 }
 
+#include <interpretedjvm.h>
+#include <instructionhelper.h>
+#include <opcodes.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *vitalixdotjava[81];
+
 EFI_STATUS EFIAPI vitalix_shell_repl(IN EFI_SYSTEM_TABLE* SystemTable) {
 	unsigned char i;
 	switch (serial_port_getkey()) {
@@ -554,6 +563,62 @@ EFI_STATUS EFIAPI vitalix_shell_repl(IN EFI_SYSTEM_TABLE* SystemTable) {
 			break;
 		case 'b':
 			serial_port_putchar('b');
+			switch (serial_port_getkey()) {
+				case 'o':
+					serial_port_putchar('o');
+					switch (serial_port_getkey()) {
+						case 'o':
+							serial_port_putchar('o');
+							switch (serial_port_getkey()) {
+								case 't':
+									serial_port_putchar('t');
+									switch (serial_port_getkey()) {
+										case '\r':
+											serial_port_putchar('\n');
+											InterpretedJVM jvm = prepareJVM(vitalixdotjava, 1);
+											push_Method(&jvm, vitalixdotjava[80], "main", "void");
+											executeAllMethods_NoReturn(&jvm);
+											break;
+										default:
+											serial_port_putchar(getkey);
+											break;
+									}
+									break;
+								case '\r':
+									serial_port_putchar('\r');
+									serial_port_putchar('\n');
+									serial_port_putchar(' ');
+									serial_port_putchar('#');
+									serial_port_putchar(' ');
+									break;
+								default:
+									serial_port_putchar(getkey);
+									break;
+							}
+							break;
+						case '\r':
+							serial_port_putchar('\r');
+							serial_port_putchar('\n');
+							serial_port_putchar(' ');
+							serial_port_putchar('#');
+							serial_port_putchar(' ');
+							break;
+						default:
+							serial_port_putchar(getkey);
+							break;
+					}
+					break;
+				case '\r':
+					serial_port_putchar('\r');
+					serial_port_putchar('\n');
+					serial_port_putchar(' ');
+					serial_port_putchar('#');
+					serial_port_putchar(' ');
+					break;
+				default:
+					serial_port_putchar(getkey);
+					break;
+			}
 			break;
 		case 'c':
 			serial_port_putchar('c');

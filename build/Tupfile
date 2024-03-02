@@ -1,3 +1,0 @@
-: ../src/Vitalix.c |> clang -target x86_64-unknown-windows -ffreestanding -fshort-wchar -c %f -Oz -Wno-error -o Vitalix.dll |> Vitalix.dll
-: Vitalix.dll |> lld -flavor link -subsystem:efi_application -entry:UefiMain Vitalix.dll -out:BOOTX64.EFI |> BOOTX64.EFI
-: BOOTX64.EFI |> dd if=/dev/zero of=Vitalix.img bs=48M count=1 && printf "g\nn\n\n\n\nt\n1\nx\nn\nVitalix\nr\nw\n" | fdisk Vitalix.img && mkfs.fat -F 32 Vitalix.img && mmd -i Vitalix.img ::/EFI && mmd -i Vitalix.img ::/EFI/BOOT && mcopy -i Vitalix.img %f ::/EFI/BOOT |> Vitalix.img
